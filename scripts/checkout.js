@@ -1,4 +1,9 @@
-import {cart, removeFromCart, calculateCartQuantity} from '../data/cart.js';
+import {
+  cart, 
+  removeFromCart,
+  calculateCartQuantity,
+  updateQuantity
+} from '../data/cart.js';
 import {products} from '../data/products.js';
 import {formatCurrency} from './utils/money.js';
 
@@ -34,15 +39,16 @@ cart.forEach((cartItem) => {
           </div>
           <div class="product-quantity">
             <span>
-              Quantity: <span class="quantity-label">${cartItem.quantity}</span>
+              Quantity: <span class="quantity-label js-quantity-label-${matchingProduct.id}">${cartItem.quantity}</span>
             </span>
             <span class="update-quantity-link link-primary" 
-            data-product-id="${matchingProduct.id}">
-            Update
+              data-product-id="${matchingProduct.id}">
+              Update
             </span>
 
-            <input class="quantity-input"/>
-            <span class="save-quantity-link link-primary">
+            <input class="quantity-input js-quantity-input-${matchingProduct.id}"/>
+            <span class="save-quantity-link link-primary"
+              data-product-id=${matchingProduct.id}>
               Save
             </span>
 
@@ -133,5 +139,30 @@ document.querySelectorAll('.update-quantity-link').forEach((link) => {
     );
 
     container.classList.add('is-editing-quantity');
+  });
+});
+
+document.querySelectorAll('.save-quantity-link').forEach((link) => {
+  link.addEventListener('click', () => {
+    const productId = link.dataset.productId;
+
+    const container = document.querySelector(
+      `.js-cart-item-container-${productId}`
+    );
+
+    container.classList.remove('is-editing-quantity');
+
+    const quantity = document.querySelector(
+      `.js-quantity-input-${productId}`
+    );
+
+    const quantityValue = Number(quantity.value);
+
+    updateQuantity(productId, quantityValue);
+
+    const quantityLabel = document.querySelector(`.js-quantity-label-${productId}`);
+    quantityLabel.innerHTML = quantityValue;
+
+    updateCartQuantity();
   });
 });

@@ -62,9 +62,25 @@ export function calculateCartQuantity() {
     cartQuantity += cartItem.quantity;
   });
 
-  if (cartQuantity === 0) {
-    return '';
-  }
+  // Optional to show the cart empty instead of 0 in home page
+  
+  // if (cartQuantity === 0) {
+  //   return '';
+  // }
 
   return cartQuantity;
+}
+
+export function updateQuantity(productId, newQuantity) {
+  let matchingItem;
+
+  cart.forEach((cartItem) => {
+    if (productId === cartItem.productId) {
+      matchingItem = cartItem;
+    }
+  });
+
+  matchingItem.quantity = newQuantity;
+
+  saveToStorage();
 }
